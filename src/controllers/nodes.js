@@ -1,5 +1,6 @@
 const DB = require("../../configurations/db");
 const Formatted = require("./formatted.data");
+const short = require("short-uuid");
 // const TB_N = "n_devices";
 const TB_N = "devices";
 const TB_SS = "data_node";
@@ -223,6 +224,43 @@ DB.query(sql, value, (err, result) => {
     }
   });
 };
+const addDevice = async (req, res) => {
+  console.log("addDevice");
+  const uniqeId = short.generate();
+  console.log(uniqeId);
+  const ID = req.params.nodeId;
+  const data = req.body;
+  const insertsql = `
+    INSERT INTO ${TB_N} (d_name, type, lat, lon, status, user_id, uniqe_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+  const insertValues = [
+    data.d_name,
+    data.type,
+    data.lat,
+    data.lon,
+    1,
+    data.user_id,
+    uniqeId,
+  ];
+
+  DB.query(insertsql, insertValues, (err, value) => {
+    if (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({ status: "error", message: err.message, code: "500" });
+    }
+    return res.json({
+      status: "Success",
+      code: "200",
+      message: "Device added successfully",
+    });
+  });
+};
+
+
+
 
 module.exports = {
   getDevices,
@@ -234,4 +272,6 @@ module.exports = {
   postSetDataMode,
   getModeData,
   putMode,
+  addDevice,
 };
+

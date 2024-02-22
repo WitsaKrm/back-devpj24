@@ -22,6 +22,7 @@ const nodeRoutes = (app) => {
   app.post('/mode/:nodeId', controllers.nodes.postSetDataMode);
   app.get('/mode/:nodeId', controllers.nodes.getModeData);
   app.put('/mode/:nodeId', controllers.nodes.putMode);
+  app.post('/add-device', controllers.nodes.addDevice);
 };
 
 const lineRoutes = (app) => {
