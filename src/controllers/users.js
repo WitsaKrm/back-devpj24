@@ -233,7 +233,7 @@ const deleteUser = async (req, res) => {
         .status(500)
         .json({ status: "Error", message: "Internal Server Error" });
     } else {
-      const count = result;
+      const count = result[0].count;
       console.log(count);
 
       if (count > 0) {
