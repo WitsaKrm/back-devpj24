@@ -1,27 +1,16 @@
-const { Sequelize } = require("sequelize");
-const config = require("./config");
-require('dotenv').config()
+require('dotenv').config();
+const mysql = require('mysql2');
 
-const DB = new Sequelize(
-  config.db.database,
-  config.db.user,
-  config.db.pwd,
-  {
-    host: config.db.host,
-    port: config.db.Port,
-    dialect: config.db.type,
-    logging: config.db.logging,
-  }
-);
+const connection = mysql.createConnection(process.env.DATABASE_URL);
 
-DB
-  .authenticate()
-  .then(() => {
-    console.log("Connection has been established successfully.");
-
-  })
-  .catch((err) => {
+connection.connect((err) => {
+  if (err) {
     console.error("Unable to connect to the database:", err);
-  });
+  } else {
+    console.log('Connected to PlanetScale!');
+    console.log("Connection has been established successfully.");
+  }
 
-module.exports = DB;
+  // Close the connection after logging the status
+  connection.end();
+});

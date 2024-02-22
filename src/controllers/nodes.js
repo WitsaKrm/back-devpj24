@@ -206,6 +206,7 @@ const putMode = async (req, res) => {
     const time = await Formatted.fomattdTime();
     console.log(data);
     console.log(date, time);
+    console.log(parseInt(data.devices_node_id));
     const sql = `UPDATE ${TB_MD} SET
       pump_st = :pump_st,
       current_level = :current_level,
@@ -223,7 +224,7 @@ const putMode = async (req, res) => {
         st_mode: data.st_mode,
         start_date: date,
         start_time: time,
-        devices_node_id: data.devices_node_id,
+        devices_node_id: parseInt(data.devices_node_id),
       },
       type: DB.QueryTypes.UPDATE,
     });

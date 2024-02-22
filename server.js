@@ -1,7 +1,8 @@
+require("dotenv").config();
 const path = require("path");
 const buildApp = require("./src/app");
 const {nodeRoutes,userRoutes} = require('./src/routes/routes')
-require("dotenv").config();
+
 
 const startApp = async () => {
   const appOptions = {
@@ -10,13 +11,13 @@ const startApp = async () => {
 
   const app = buildApp(appOptions);
 
-  const port = /*process.env.APP_PORT || */9000;
+  const port = process.env.DB_PORT;
   const host = process.env.DB_HOST;
-  // const host = `172.24.163.45`;
   nodeRoutes(app);
   userRoutes(app);
   try {
-    app.listen(port, host, () => {
+    app.listen(port, () => {
+
       console.log(`Server is running on port ${port} ${host}`);
     });
   } catch (error) {
