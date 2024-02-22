@@ -11,12 +11,12 @@ const startApp = async () => {
 
   const app = buildApp(appOptions);
 
-  const port = process.env.DB_PORT;
+  const port = process.env.DB_PORT || 9000;
   const host = process.env.DB_HOST;
   nodeRoutes(app);
   userRoutes(app);
   try {
-    app.listen(port, () => {
+    app.listen(port,   () => {
 
       console.log(`Server is running on port ${port} ${host}`);
     });

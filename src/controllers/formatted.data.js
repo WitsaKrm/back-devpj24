@@ -1,4 +1,4 @@
-const fomattdDate = async (req, res) => {
+const fomattedDate =(req, res) => {
     // Get the current date and time in the GMT+07:00 time zone
     const currentTimezoneOffset = -7 * 60; // Offset in minutes
     const currentTimestamp = Date.now(); // Get current timestamp in UTC
@@ -17,7 +17,7 @@ const fomattdDate = async (req, res) => {
     return formattedDate;
 };
 
-const fomattdTime = async (req, res) => {
+const fomattedTime =(req, res) => {
     // Get the current date and time in the GMT+07:00 time zone
     const currentTimezoneOffset = -7 * 60; // Offset in minutes
     const currentTimestamp = Date.now(); // Get current timestamp in UTC
@@ -41,6 +41,6 @@ const fomattdTime = async (req, res) => {
 };
 
 module.exports = {
-    fomattdDate,
-    fomattdTime
+    fomattedDate,
+    fomattedTime
 };

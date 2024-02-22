@@ -1,9 +1,11 @@
+// in const DB = require("../../configurations/db");
+
 require('dotenv').config();
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection(process.env.DATABASE_URL);
+const DB = mysql.createConnection(process.env.DATABASE_URL);
 
-connection.connect((err) => {
+DB.connect((err) => {
   if (err) {
     console.error("Unable to connect to the database:", err);
   } else {
@@ -11,6 +13,7 @@ connection.connect((err) => {
     console.log("Connection has been established successfully.");
   }
 
-  // Close the connection after logging the status
-  connection.end();
+  // // Close the connection after logging the status
+  // DB.end();
 });
+module.exports = DB

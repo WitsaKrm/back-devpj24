@@ -5,100 +5,96 @@ const TB_N = "devices";
 const TB_SS = "data_node";
 const TB_MD = "station_mode";
 
-const getDevices = async (req, res) => {
+const getDevices = (req, res) => {
   console.log("getDevices");
   console.log(req.body);
   let sql = `SELECT * FROM ${TB_N}`;
-  DB.query(sql, { type: DB.QueryTypes.SELECT })
-
-    .then((results) => {
-      console.log("nodes : ", results); // This logs the query results
-      res.json({ status: "Success", devices: results });
-    })
-    .catch((err) => {
+  DB.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error executing the query:", err);
       res.json({ status: "Error", message: err });
-    });
+      return;
+    }
+    res.json({ status: "Success", devices: result });
+  });
 };
+
 const getDevicesByUID = async (req, res) => {
   console.log("getDevicesByUID");
-  // console.log(req.params);
   const U_ID = req.params.user_id;
-  const sql = "SELECT * FROM " + TB_N + " WHERE user_id = :userId";
-  try {
-    const results = await DB.query(sql, {
-      replacements: { userId: U_ID },
-      type: DB.QueryTypes.SELECT,
-    });
-
-    // console.log("nodes : ", results);
-    res.json({ status: "Success", devices: results });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ status: "Error", message: "Internal Server Error" });
-  }
+  const sql = `SELECT * FROM ${TB_N} WHERE user_id = ?`;
+  const value = [U_ID];
+  console.log(sql);
+  DB.query(sql, value, (err, result) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      res.json({ status: "Error", message: err });
+      return;
+    }
+    res.json({ status: "Success", devices: result });
+  });
 };
 
 const getSenser = async (req, res) => {
   const nodeId = req.params.nodeId;
   console.log("getSenser", nodeId);
-  let sql = `SELECT * FROM ${TB_SS} WHERE node_id = ${nodeId} ORDER BY data_id DESC LIMIT 1 `;
+  const sql = `SELECT * FROM ${TB_SS} WHERE node_id = ${nodeId} ORDER BY data_id DESC LIMIT 1 `;
   console.log(sql);
-  DB.query(sql, { type: DB.QueryTypes.SELECT })
-    .then((results) => {
-      res.json({ status: "Success", senser: results });
-    })
-    .catch((err) => {
-      res.json({ status: "Error", message: err });
-    });
+  DB.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      res.json({ status: "Error", message: err.message });
+      return;
+    }
+    res.json({ status: "Success", senser: results });
+  });
 };
+
 const postDataNode = async (req, res) => {
   console.log("postDataNode");
   const data = req.body;
   console.log(data);
   console.log(data);
-  const Date = await Formatted.fomattdDate();
-  const Time = await Formatted.fomattdTime();
+  const Date = Formatted.fomattedDate();
+  const Time = Formatted.fomattedTime();
   console.log(Date, Time);
 
-  const insertsql = `INSERT INTO ${TB_SS} (level, air_temp, air_humi, soil_mois, light, date, time, node_id) VALUES (?,?, ?, ?, ?, ?, ?, ?)`;
-  DB.query(insertsql, {
-    replacements: [
-      data.level,
-      data.air_temp,
-      data.air_humi,
-      data.soil_mois,
-      data.light,
-      Date,
-      Time,
-      data.node_id,
-    ],
-    type: DB.QueryTypes.INSERT,
-  })
-    .then(() => {
-      res.json({
-        status: "Success",
-        code: "200",
-        message: "Node Data added successfully",
-      });
-    })
-    .catch((err) => {
+  const insertsql = `INSERT INTO ${TB_SS} (level, air_temp, air_humi, soil_mois, light, date, time, node_id) VALUES (?,?,?,?,?,?,?,?)`;
+  const value = [
+    data.level,
+    data.air_temp,
+    data.air_humi,
+    data.soil_mois,
+    data.light,
+    Date,
+    Time,
+    data.node_id,
+  ];
+  DB.query(insertsql, value, (err, result) => {
+    if (err) {
       res.json({ status: "error", message: err, code: "500" });
       console.log(err);
+    }
+    res.json({
+      status: "Success",
+      code: "200",
+      message: "Node Data added successfully",
     });
+  });
 };
+
 const getAllSenserChartData = async (req, res) => {
   console.log("getAllSenserData", req.params.nodeId);
   const nodeId = req.params.nodeId;
-  const data = req.params.data;
+  console.log(nodeId);
   let sql = `SELECT * FROM ${TB_SS} WHERE node_id = ${nodeId}`;
   console.log(sql);
-  DB.query(sql, { type: DB.QueryTypes.SELECT })
-    .then((results) => {
-      res.json({ status: "Success", chart: results });
-    })
-    .catch((err) => {
+  DB.query(sql, (err, result) => {
+    if (err) {
       res.json({ status: "Error", message: err });
-    });
+    }
+    res.json({ status: "Success", chart: result });
+  });
 };
 const getChartData = async (req, res) => {
   console.log("getAllSenserData", req.params.nodeId);
@@ -107,77 +103,63 @@ const getChartData = async (req, res) => {
   let sql = `SELECT ${data}, date, time FROM ${TB_SS} WHERE node_id = ${nodeId} `;
   console.log(sql);
 
-  DB.query(sql, { type: DB.QueryTypes.SELECT })
-    .then((results) => {
-      console.log("oneChart : ", results); // This logs the query results
-
-      res.json({ status: "Success", oneChart: results });
-    })
-    .catch((err) => {
+  DB.query(sql, (err, result) => {
+    if (err) {
       res.json({ status: "Error", message: err });
-    });
+    }
+    res.json({ status: "Success", oneChart: result });
+  });
 };
-const postSetDataMode = async (req, res) => {
+const postSetDataMode = (req, res) => {
   console.log("postSetDataMode");
   const ID = req.params.nodeId;
-  console.log("12315646"+req);
-  try {
-    const Date = await Formatted.fomattdDate(); 
-    const Time = await Formatted.fomattdTime(); 
+  const fomattedDate = Formatted.fomattedDate();
+  const fomattedTime = Formatted.fomattedTime();
+  const countQuery = `SELECT COUNT(*) as count FROM ${TB_MD} WHERE devices_node_id = ?`;
+  const countValue = [ID];
+  const insertSql = `INSERT INTO ${TB_MD} (pump_st, current_level, go_level, st_mode, start_date, start_time, devices_node_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const insertValues = [
+    "OFF",
+    "0",
+    "0",
+    "NONE",
+    fomattedDate,
+    fomattedTime,
+    ID,
+  ];
+  DB.query(countQuery, countValue, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({ status: "error", message: err.message, code: "500" });
+    }
 
-    const countQuery = `SELECT COUNT(*) as count FROM ${TB_MD} WHERE devices_node_id = ?`;
-    const insertSql = `INSERT INTO ${TB_MD} (pump_st, current_level, go_level, st_mode, start_date, start_time, devices_node_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    // const updateSql = `UPDATE ${TB_MD} SET pump_st = ?, current_level = ?, go_level = ?, st_mode = ?, start_date = ?, start_time = ? WHERE devices_node_id = ?`;
-
-    const result = await DB.query(countQuery, {
-      replacements: [ID],
-      type: DB.QueryTypes.SELECT,
-    });
     console.log(countQuery);
     const count = result[0].count;
     console.log(count);
-
     if (count === 0) {
-      await DB.query(insertSql, {
-        replacements: ["OFF", "0", "0", "NONE", Date, Time, ID],
-        type: DB.QueryTypes.INSERT,
-      }).then((results) => {
-        console.log(insertSql);
-        console.log(result);
+      DB.query(insertSql, insertValues, (err, value) => {
+        if (err) {
+          console.error(err);
+          return res
+            .status(500)
+            .json({ status: "error", message: err.message, code: "500" });
+        }
+        return res.json({
+          status: "Success",
+          code: "200",
+          message: "Node Data added successfully",
+        });
       });
-      res.json({
-        status: "Success",
-        code: "200",
-        message: "Node Data added successfully",
-      });
-    }
-    // else if(count === 1){
-    //   await DB.query(updateSql, {
-    //     replacements: ["OFF", "0", "0", "NONE", Date, Time, ID],
-    //     type: DB.QueryTypes.INSERT,
-    //   }).then((results) => {
-    //     console.log(updateSql);
-    //     console.log(result);
-    //   });
-    //   res.json({
-    //     status: "Success",
-    //     code: "200",
-    //     message: "Node Data added successfully",
-    //   });
-    // }
-    else {
-      res.json({
+    } else {
+      return res.json({
         status: "error",
         message: "Node Data already exists",
         code: "409",
       });
     }
-  } catch (err) {
-    res
-      .status(500)
-      .json({ status: "error", message: err.message, code: "500" });
-    console.error(err);
-  }
+  });
 };
 const getModeData = async (req, res) => {
   console.log("getModeData", req.params.nodeId);
@@ -186,71 +168,66 @@ const getModeData = async (req, res) => {
   let sql = `SELECT *  FROM ${TB_MD} WHERE devices_node_id = ${nodeId} `;
   console.log(sql);
 
-  DB.query(sql, { type: DB.QueryTypes.SELECT })
-    .then((results) => {
-      console.log("mode : ", results);
-
-      res.json({ status: "Success", mode: results });
-    })
-    .catch((err) => {
+  DB.query(sql, (err, result) => {
+    if (err) {
       res.json({ status: "Error", message: err });
-    });
-};
-const putMode = async (req, res) => {
-  console.log('put');
-  try {
-    console.log("putMode 123465");
-    const data = req.body;
-    console.log(data);
-    const date = await Formatted.fomattdDate();
-    const time = await Formatted.fomattdTime();
-    console.log(data);
-    console.log(date, time);
-    console.log(parseInt(data.devices_node_id));
-    const sql = `UPDATE ${TB_MD} SET
-      pump_st = :pump_st,
-      current_level = :current_level,
-      go_level = :go_level,
-      st_mode = :st_mode,
-      start_date = :start_date,
-      start_time = :start_time
-      WHERE devices_node_id = :devices_node_id`;
-
-    const result = await DB.query(sql, {
-      replacements: {
-        pump_st: data.pump_st,
-        current_level: data.current_level,
-        go_level: data.go_level,
-        st_mode: data.st_mode,
-        start_date: date,
-        start_time: time,
-        devices_node_id: parseInt(data.devices_node_id),
-      },
-      type: DB.QueryTypes.UPDATE,
-    });
-    console.log(result);
-
-    const count = result[1];
-    if (count > 0) {
-      console.log(count);
-      return res
-        .status(200)
-        .json({ status: "Success", message: "Mode updated successfully" });
     } else {
-      return res
-        .status(404)
-        .json({ status: "Error", message: "Unsuccess Mode updated " });
+      console.log("mode : ", result);
+      res.json({ status: "Success", mode: result });
     }
-  } catch (err) {
-    console.error("Error updating user:", err);
-    res.status(500).json({ status: "Error", message: err.message });
-  }
+  });
 };
+
+const putMode = async (req, res) => {
+  console.log("put mode");
+  console.log(req.params.nodeId);
+  const nodeId = req.params.nodeId;
+  const data = req.body
+  const date = Formatted.fomattedDate();
+  const time = Formatted.fomattedTime();
+  const sql = `UPDATE ${TB_MD} SET
+  pump_st = ?,
+  current_level = ?,
+  go_level = ?,
+  st_mode = ?,
+  start_date = ?,
+  start_time = ?
+  WHERE devices_node_id = ?`;
+
+const value = [ 
+ data.pump_st,
+ data.current_level,
+ data.go_level,
+ data.st_mode,
+ date,
+ time,
+ nodeId,
+];
+DB.query(sql, value, (err, result) => {
+    if (err) {
+      console.error("Error updating mode:", err);
+      res.status(500).json({ status: "Error", message: err.message });
+    } else {
+      console.log(result)
+
+      const count = result.affectedRows;
+      if (count > 0) {
+        return res
+          .status(200)
+          .json({ status: "Success", message: "Mode updated successfully" });
+      } else {
+        return res
+          .status(404)
+          .json({ status: "Error", message: "Unsuccessful Mode update" });
+      }
+    }
+  });
+};
+
 module.exports = {
   getDevices,
   getDevicesByUID,
   postDataNode,
-  // getStation,
   getSenser,
   getAllSenserChartData,
   getChartData,

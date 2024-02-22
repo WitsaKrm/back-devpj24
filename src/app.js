@@ -12,6 +12,9 @@ const buildApp = (options = {}) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(express.static("./public"));
+  app.get("/", (req,res) => {
+    res.send("COMPUTER PROJECT WITSARUT.SA")
+  })
   lineRoutes(app);
   auteMe(app);
   nodeRoutes(app)
