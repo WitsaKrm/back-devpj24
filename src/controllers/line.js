@@ -4,8 +4,8 @@ const DB = require("../../configurations/db");
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const LINE_API_URI = "https://notify-bot.line.me/oauth/token";
-const CALLBACK_URI = "http://localhost:9000/line/redirect";
+const LINE_API_URI = process.env.LINE_API_URI;
+const CALLBACK_URI = process.env.CALLBACK_URI;
 
 const lToken = async (code, userID) => {
   console.log("get Line Token");
