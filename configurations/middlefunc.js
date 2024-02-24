@@ -1,4 +1,4 @@
-const md5 = require("md5");
+const bcrypt = require("bcrypt");
 // Custom middleware
 const hash = async (inputPwd) => {
   try {

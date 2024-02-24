@@ -3,7 +3,6 @@ const Formatted = require("./formatted.data");
 const bcrypt = require("bcrypt");
 const TB = "users";
 const {
-  hashmd5,
   hash,
   pwdCompare,
 } = require("../../configurations/middlefunc");
