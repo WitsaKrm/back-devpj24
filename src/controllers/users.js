@@ -1,18 +1,24 @@
 const DB = require("../../configurations/db");
 const Formatted = require("./formatted.data");
+const bcrypt = require("bcrypt");
 const TB = "users";
-const { hashmd5 } = require("../../configurations/middlefunc");
+const {
+  hashmd5,
+  hash,
+  pwdCompare,
+} = require("../../configurations/middlefunc");
 const jwt = require("jsonwebtoken");
 // const SECRET = "KRMwitsaKrm";
 
-async function comparePasswords(dbPassword, enteredPassword) {
-  return dbPassword === enteredPassword;
-}
+// async function comparePasswords(dbPassword, enteredPassword) {
+//   return dbPassword === enteredPassword;
+// }
 const userRegister = async (req, res) => {
   console.log("userRegister");
   const data = req.body;
   console.log(data);
-  const pwd = hashmd5(data.password);
+  // const pwd = hashmd5(data.password);
+  const pwd = await hash(data.password);
   console.log(pwd);
   const Date = Formatted.fomattedDate();
 
@@ -64,7 +70,7 @@ const userRegister = async (req, res) => {
 const userLogin = async (req, res) => {
   console.log("userLogin");
   const data = req.body;
-  const pwd = hashmd5(data.password);
+  // const pwd = hashmd5(data.password);
   const username = data.username;
   console.log(pwd);
   const sql = `SELECT * FROM ${TB} WHERE username = ?`;
@@ -77,10 +83,13 @@ const userLogin = async (req, res) => {
       res.status(404).json({ status: "User not found" });
       return;
     }
-
-    console.log(result[0].password);
-
-    const isLogin = comparePasswords(result[0].password, pwd);
+    if (typeof result[0].password !== "string") {
+      return res
+        .status(500)
+        .json({ status: "Error", msg: "Invalid stored password format" });
+    }
+    const storedPwd = String(result[0].password);
+    const isLogin =  pwdCompare(storedPwd, pwd);
     console.log({
       user_id: result[0].user_id,
       username: result[0].username,
