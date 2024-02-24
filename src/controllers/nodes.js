@@ -54,22 +54,29 @@ const getSenser = async (req, res) => {
 const postDataNode = async (req, res) => {
   console.log("postDataNode");
   const data = req.body;
-  console.log(data);
+  const nodeID = parseInt(data.node_id, 10);
+  console.log(nodeID);
   console.log(data);
   const Date = Formatted.fomattedDate();
   const Time = Formatted.fomattedTime();
   console.log(Date, Time);
-
-  const insertsql = `INSERT INTO ${TB_SS} (level, air_temp, air_humi, soil_mois, light, date, time, node_id) VALUES (?,?,?,?,?,?,?,?)`;
+  if (isNaN(nodeID)) {
+    console.log("Invalid node_id. Unable to convert to an integer.");
+    res
+      .status(400)
+      .json({ error: "Invalid node_id. Unable to convert to an integer." });
+    return;
+  }
+  const insertsql = `INSERT INTO ${TB_SS} (level, air_temp, air_humi, date, time, node_id) VALUES (?,?,?,?,?,?)`;
   const value = [
     data.level,
     data.air_temp,
     data.air_humi,
-    data.soil_mois,
-    data.light,
+    // data.soil_mois,
+    // data.light,
     Date,
     Time,
-    data.node_id,
+    nodeID,
   ];
   DB.query(insertsql, value, (err, result) => {
     if (err) {
@@ -181,9 +188,10 @@ const getModeData = async (req, res) => {
 
 const putMode = async (req, res) => {
   console.log("put mode");
-  console.log(req.params.nodeId);
   const nodeId = req.params.nodeId;
-  const data = req.body
+  console.log('PUT station ID : ',nodeId);
+  const data = req.body;
+  console.log(data);
   const date = Formatted.fomattedDate();
   const time = Formatted.fomattedTime();
   const sql = `UPDATE ${TB_MD} SET
@@ -194,23 +202,30 @@ const putMode = async (req, res) => {
   start_date = ?,
   start_time = ?
   WHERE devices_node_id = ?`;
+  const succSql = `UPDATE ${TB_MD} SET
+  pump_st = ?,
+  current_level = ?,
+  go_level = ?,
+  st_mode = ?,
+  succ_date = ?,
+  succ_time = ?
+  WHERE devices_node_id = ?`;
+  const value = [
+    data.pump_st,
+    data.current_level,
+    data.go_level,
+    data.st_mode,
+    date,
+    time,
+    nodeId,
+  ];
+if(data.state === "END"){
+  DB.query(succSql, value, (err, result) => {
 
-const value = [ 
- data.pump_st,
- data.current_level,
- data.go_level,
- data.st_mode,
- date,
- time,
- nodeId,
-];
-DB.query(sql, value, (err, result) => {
     if (err) {
       console.error("Error updating mode:", err);
       res.status(500).json({ status: "Error", message: err.message });
     } else {
-      console.log(result)
-
       const count = result.affectedRows;
       if (count > 0) {
         return res
@@ -223,6 +238,25 @@ DB.query(sql, value, (err, result) => {
       }
     }
   });
+}else{
+  DB.query(sql, value, (err, result) => {   // console.log(result);
+    if (err) {
+      console.error("Error updating mode:", err);
+      res.status(500).json({ status: "Error", message: err.message });
+    } else {
+      const count = result.affectedRows;
+      if (count > 0) {
+        return res
+          .status(200)
+          .json({ status: "Success", message: "Mode updated successfully" });
+      } else {
+        return res
+          .status(404)
+          .json({ status: "Error", message: "Unsuccessful Mode update" });
+      }
+    }
+  });
+}
 };
 const addDevice = async (req, res) => {
   console.log("addDevice");
