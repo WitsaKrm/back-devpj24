@@ -7,8 +7,6 @@ const fomattedDate =(req, res) => {
     const month = (dateInGMTPlus7.getUTCMonth() + 1).toString().padStart(2, '0');
     const year = dateInGMTPlus7.getUTCFullYear();
     const formattedDate = `${year}-${month}-${day}`;
-
-    console.log(formattedDate);
     return formattedDate;
 };
 
@@ -21,7 +19,6 @@ const fomattedTime =(req, res) => {
     const minutes = dateInGMTPlus7.getUTCMinutes().toString().padStart(2, '0');
     const seconds = dateInGMTPlus7.getUTCSeconds().toString().padStart(2, '0');
     const formattedTime = `${hours}:${minutes}:${seconds}`;
-    console.log(formattedTime);
     return formattedTime;
 };
 
