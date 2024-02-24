@@ -69,9 +69,8 @@ const userRegister = async (req, res) => {
 const userLogin = async (req, res) => {
   console.log("userLogin");
   const data = req.body;
-  // const pwd = hashmd5(data.password);
+  const pwd = data.password;
   const username = data.username;
-  console.log(pwd);
   const sql = `SELECT * FROM ${TB} WHERE username = ?`;
   const value = [username];
   DB.query(sql, value, (err, result) => {
