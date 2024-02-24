@@ -22,4 +22,4 @@ const pwdCompare = async (storedPwd, inputPwd) => {
     throw error;
   }
 };
-module.exports = { hashmd5, hash, pwdCompare };
+module.exports = { hash, pwdCompare };
