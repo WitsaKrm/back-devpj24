@@ -36,11 +36,11 @@ const getDevicesByUID = async (req, res) => {
   });
 };
 const getStation = async (req, res) => {
-  console.log("getDevicesByUID");
-  const D_ID = req.params.user_id;
+  console.log("getStaion");
+  const D_ID = req.params.nodeid;
   const sql = `SELECT * FROM ${TB_N} WHERE d_id = ?`;
   const value = [D_ID];
-  console.log(sql,value);
+  console.log(sql,D_ID);
   DB.query(sql, value, (err, result) => {
     if (err) {
       console.error("Error executing the query:", err);
