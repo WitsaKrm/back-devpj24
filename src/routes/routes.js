@@ -17,7 +17,7 @@ const nodeRoutes = (app) => {
   app.get('/devices', controllers.nodes.getDevices);
   app.get('/devices/:user_id', controllers.nodes.getDevicesByUID);
   app.post('/nodes', controllers.nodes.postDataNode);
-  app.get('/devices/:nodeId', controllers.nodes.getStation);
+  app.get('/devices/did/:nodeId', controllers.nodes.getStation);
   app.get('/senser/:nodeId', controllers.nodes.getSenser);
   app.get('/chart_ss/:nodeId', controllers.nodes.getAllSenserChartData);
   app.get('/chart_ss/:nodeId/:data', controllers.nodes.getChartData);
