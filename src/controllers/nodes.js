@@ -38,7 +38,7 @@ const getDevicesByUID = async (req, res) => {
 const getStation = async (req, res) => {
   console.log("getStaion");
   console.log(req.params);
-  const ID = req.params.nodeid;
+  const ID = req.params.nodeId;
   console.log(ID);
   const sql = `SELECT * FROM ${TB_N} WHERE d_id = ?`;
   const value = [ID];
@@ -48,6 +48,7 @@ const getStation = async (req, res) => {
       res.json({ status: "Error", message: err });
       return;
     }
+    console.log(result);
     res.json({ status: "Success", station: result });
   });
 };
