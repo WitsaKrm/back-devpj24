@@ -98,6 +98,7 @@ const userLogin = async (req, res) => {
           username: result[0].username,
           firstname: result[0].f_name,
           role: result[0].role,
+          ltk: result[0].line_acctk
         },
         process.env.JWT_SECRET,
         { expiresIn: "12h" }
