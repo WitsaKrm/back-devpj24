@@ -89,6 +89,7 @@ const userLogin = async (req, res) => {
       user_id: result[0].user_id,
       username: result[0].username,
       fistname: result[0].f_name,
+      ltk: result[0].line_acctk
     });
     if (isLogin) {
       const token = jwt.sign(
