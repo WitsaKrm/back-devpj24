@@ -37,6 +37,7 @@ const getDevicesByUID = async (req, res) => {
 };
 const getStation = async (req, res) => {
   console.log("getStaion");
+  console.log(req.params);
   const D_ID = req.params.nodeid;
   console.log(D_ID);
   const sql = `SELECT * FROM ${TB_N} WHERE d_id = ?`;
