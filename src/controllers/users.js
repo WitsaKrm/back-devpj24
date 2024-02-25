@@ -144,7 +144,7 @@ const getUserById = async (req, res) => {
   });
 };
 const getUserByUsername = async (req, res) => {
-  console.log("getUserById");
+  console.log("getUserByUsername");
   console.log("param", req.params);
   const username = req.params.username;
   const sql = `SELECT * FROM ${TB} WHERE username = ?`;
