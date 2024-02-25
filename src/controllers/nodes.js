@@ -35,6 +35,22 @@ const getDevicesByUID = async (req, res) => {
     res.json({ status: "Success", devices: result });
   });
 };
+const getStation = async (req, res) => {
+  console.log("getDevicesByUID");
+  const D_ID = req.params.user_id;
+  const sql = `SELECT * FROM ${TB_N} WHERE d_id = ?`;
+  const value = [D_ID];
+  console.log(sql,value);
+  DB.query(sql, value, (err, result) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      res.json({ status: "Error", message: err });
+      return;
+    }
+    res.json({ status: "Success", station: result });
+  });
+};
+
 
 const getSenser = async (req, res) => {
   const nodeId = req.params.nodeId;
@@ -307,5 +323,6 @@ module.exports = {
   getModeData,
   putMode,
   addDevice,
+  getStation
 };
 
