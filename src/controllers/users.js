@@ -2,10 +2,7 @@ const DB = require("../../configurations/db");
 const Formatted = require("./formatted.data");
 const bcrypt = require("bcrypt");
 const TB = "users";
-const {
-  hash,
-  pwdCompare,
-} = require("../../configurations/middlefunc");
+const { hash, pwdCompare } = require("../../configurations/middlefunc");
 const jwt = require("jsonwebtoken");
 // const SECRET = "KRMwitsaKrm";
 
@@ -87,7 +84,7 @@ const userLogin = async (req, res) => {
         .json({ status: "Error", msg: "Invalid stored password format" });
     }
     const storedPwd = String(result[0].password);
-    const isLogin =  pwdCompare(storedPwd, pwd);
+    const isLogin = pwdCompare(storedPwd, pwd);
     console.log({
       user_id: result[0].user_id,
       username: result[0].username,
@@ -266,7 +263,20 @@ const deleteUser = async (req, res) => {
     }
   });
 };
-
+const joinTest = async (req, res) => {
+  const joinSql = `SELECT *
+FROM users
+JOIN devices ON users.user_id = 7
+WHERE devices.d_id = 4`;
+  DB.query(joinSql, (err, result) => {
+    if (err) {
+      console.error("Error fetching user by ID:", err);
+      res.status(500).json({ status: "Error", message: err.message });
+    } else {
+      res.json({ status: "Success", users: result });
+    }
+  });
+};
 module.exports = {
   getUsers,
   getUserById,
@@ -276,4 +286,5 @@ module.exports = {
   putUser,
   deleteUser,
   authen,
+  joinTest,
 };

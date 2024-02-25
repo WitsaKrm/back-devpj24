@@ -9,6 +9,8 @@ const userRoutes = (app) => {
   app.get('/user/username/:username', controllers.users.getUserByUsername);
   app.put('/user', controllers.users.putUser);
   app.delete('/thisuser/:user_id', controllers.users.deleteUser);
+  app.get('/join-u-d', controllers.users.joinTest);
+
 };
 
 const nodeRoutes = (app) => {
