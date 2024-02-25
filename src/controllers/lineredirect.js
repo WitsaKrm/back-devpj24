@@ -19,6 +19,7 @@ const redirect = async (req, res) => {
 const notify = async (req, res) => {
   console.log("in notify");
   console.log(req.body.token);
+  console.log(req.body);
   console.log(req.body.status);
   const checkStt = req.body.status;
   const status =
