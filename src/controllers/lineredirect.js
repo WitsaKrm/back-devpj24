@@ -18,7 +18,7 @@ const redirect = async (req, res) => {
 
 const notify = async (req, res) => {
   console.log("in notify");
-  console.log("req :",req.body);
+  console.log("req :", req.body);
   console.log(req.body.token);
   console.log(req.body.status);
   const checkStt = req.body.status;
@@ -39,7 +39,7 @@ const notify = async (req, res) => {
       สถานะ   :  ${status}`;
 
   try {
-    if (req.body.token === undefined) {
+    if (req.body.token === undefined || req.body.token === "") {
       return res.status(401).send({ message: "Notify Unsuccess." });
     } else {
       await line.sendLineNotify(message, req.body.token);
