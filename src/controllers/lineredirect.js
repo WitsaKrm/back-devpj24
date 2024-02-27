@@ -40,6 +40,7 @@ const notify = async (req, res) => {
 
   try {
     if (req.body.token === undefined || req.body.token === "") {
+      console.log("line notify is ", req.body.message, status);
       return res.status(401).send({ message: "Notify Unsuccess." });
     } else {
       await line.sendLineNotify(message, req.body.token);
